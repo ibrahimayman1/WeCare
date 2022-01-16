@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Motim_Data_Access_Layer.Models;
 
 namespace DataAccsess_Layer.Migrations
 {
     [DbContext(typeof(WeCareContext))]
-    partial class WeCareContextModelSnapshot : ModelSnapshot
+    [Migration("20220116091918_TiTlecitycolum")]
+    partial class TiTlecitycolum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
