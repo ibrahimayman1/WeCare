@@ -4,6 +4,7 @@ using Motim_Data_Access_Layer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,8 +30,8 @@ namespace bussinesslayer.Repository
 
         public void Delete(int Id)
         {
-            T Object = GetById(Id);
 
+            T Object = GetById(Id);
             if(Object !=null)
             _context.Set<T>().Remove(Object);
             _context.SaveChanges();
@@ -55,15 +56,17 @@ namespace bussinesslayer.Repository
 
         public void Update(T entity )
         {
-           
+            
             _context.Entry(entity).State=EntityState.Modified;
             _context.SaveChanges();
 
         }
-
-        private T NoContent()
+        public T Search(Expression<Func<T, bool>> Match  )
         {
-            throw new NotImplementedException();
+                    
+            return _context.Set<T>().SingleOrDefault(Match);
         }
+
+       
     }
 }

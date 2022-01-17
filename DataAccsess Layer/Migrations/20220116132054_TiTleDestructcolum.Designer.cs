@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Motim_Data_Access_Layer.Models;
 
 namespace DataAccsess_Layer.Migrations
 {
     [DbContext(typeof(WeCareContext))]
-    partial class WeCareContextModelSnapshot : ModelSnapshot
+    [Migration("20220116132054_TiTleDestructcolum")]
+    partial class TiTleDestructcolum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,33 +365,6 @@ namespace DataAccsess_Layer.Migrations
                     b.ToTable("Interests");
                 });
 
-            modelBuilder.Entity("Motim_Data_Access_Layer.Models.Vaccancies", b =>
-                {
-                    b.Property<int>("VaccineID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VaccineMonths")
-                        .HasColumnType("int");
-
-                    b.Property<string>("VaccineTittle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VaccineTypeID")
-                        .HasColumnType("int");
-
-                    b.HasKey("VaccineID");
-
-                    b.HasIndex("VaccineTypeID");
-
-                    b.ToTable("Vaccancies");
-                });
-
             modelBuilder.Entity("Motim_Data_Access_Layer.Models.VaccineTypes", b =>
                 {
                     b.Property<int>("VaccineTypeID")
@@ -491,17 +466,6 @@ namespace DataAccsess_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("DrugsGroups");
-                });
-
-            modelBuilder.Entity("Motim_Data_Access_Layer.Models.Vaccancies", b =>
-                {
-                    b.HasOne("Motim_Data_Access_Layer.Models.VaccineTypes", "VaccineTypes")
-                        .WithMany()
-                        .HasForeignKey("VaccineTypeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VaccineTypes");
                 });
 #pragma warning restore 612, 618
         }

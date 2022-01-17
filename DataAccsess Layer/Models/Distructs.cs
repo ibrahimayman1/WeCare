@@ -12,7 +12,7 @@ namespace Motim_Data_Access_Layer.Models
     {
         [Key]
         public int DistrictID { get; set; }
-        public int DistrictTitle { get; set; }
+        public String DistrictTitle { get; set; }
         public int CityID { get; set; }
         [ForeignKey("CityID")]
         public City City { get; set; }

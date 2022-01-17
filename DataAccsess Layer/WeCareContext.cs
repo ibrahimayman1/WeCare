@@ -23,6 +23,8 @@ namespace Motim_Data_Access_Layer.Models
         public virtual DbSet<DrugsGroups> DrugsGroups { get; set; }
         public virtual DbSet<Interests> Interests { get; set; }
         public virtual DbSet<VaccineTypes> VaccineTypes { get; set; }
+        public virtual DbSet<Vaccancies> Vaccancies { get; set; }
+
 
 
     }
