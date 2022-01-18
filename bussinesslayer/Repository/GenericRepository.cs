@@ -32,7 +32,7 @@ namespace bussinesslayer.Repository
         {
 
             T Object = GetById(Id);
-            if(Object !=null)
+            
             _context.Set<T>().Remove(Object);
             _context.SaveChanges();
         }

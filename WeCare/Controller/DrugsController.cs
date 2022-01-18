@@ -3,6 +3,7 @@ using DataAccsess_Layer.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
+using System;
 
 namespace WeCare.Controller
 {
@@ -24,9 +25,19 @@ namespace WeCare.Controller
         /// <response code="400">Drugs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Drugs right now</response>
         [HttpGet("id")]
-        public IActionResult GetById(int id)
+        public IActionResult GetDrugsById(int id)
         {
-            return Ok(_unitOfWork.Drugs.GetById(id));
+            try
+            {
+                var Drug = _unitOfWork.Drugs.GetById(id);
+                if(Drug == null)
+                    throw new Exception("No Drugs is founnd with  id: " + id);
+                return Ok(Drug);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Retrieves All Drugs
@@ -36,9 +47,19 @@ namespace WeCare.Controller
         /// <response code="400">Drugs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Drugs right now</response>
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult GetAllDrugs()
         {
-            return Ok(_unitOfWork.Drugs.GetAll());
+            try
+            {
+                var Drugs= _unitOfWork.Drugs.GetAll();
+                if(Drugs == null)
+                    return NoContent();
+                return Ok(Drugs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Delete specific Drugs by ID
@@ -48,10 +69,18 @@ namespace WeCare.Controller
         /// <response code="400">Drugs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Drugs right now</response>
         [HttpDelete]
-        public IActionResult delete(int id)
+        public IActionResult DeleteDrugbyId(int id)
         {
-            _unitOfWork.Drugs.Delete(id);
-            return Ok();
+            try
+            {
+                _unitOfWork.Drugs.Delete(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Deleted Action Not complete no Drugs with this id:" + id);
+            }
         }
         /// <summary>
         /// Add New Drugs
@@ -61,9 +90,11 @@ namespace WeCare.Controller
         /// <response code="400">Drugs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Drugs right now</response>
         [HttpPost]
-        public IActionResult Add([FromQuery] DrugsCreateViewModel Drugs)
+        public IActionResult AddDrug([FromQuery] DrugsCreateViewModel Drugs)
         {
-            Drugs model = new Drugs()
+            try
+            {
+                Drugs model = new Drugs()
             {
                 DrugTitle = Drugs.DrugTitle,
                 DrugGroupID = Drugs.DrugGroupID,
@@ -71,6 +102,11 @@ namespace WeCare.Controller
             };
             _unitOfWork.Drugs.Add(model);
             return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check that you  add the Drugs correctly");
+            }
         }
         /// <summary>
         /// Update Existing Drugs
@@ -80,10 +116,18 @@ namespace WeCare.Controller
         /// <response code="400">Drugs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Drugs right now</response>
         [HttpPut]
-        public IActionResult Update( Drugs Drugs)
+        public IActionResult UpdateDrug( Drugs Drugs)
         {
-            _unitOfWork.Drugs.Update( Drugs);
-            return Ok();
+            try
+            {
+                _unitOfWork.Drugs.Update(Drugs);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check the you update the  correct Distructs");
+            }
+
         }
         /// <summary>
         /// Search for Specific cit by using SearchKey
@@ -95,7 +139,15 @@ namespace WeCare.Controller
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
-            return Ok(_unitOfWork.Drugs.Search(k => k.DrugTitle == searchkey));
+            try
+            {
+                return Ok(_unitOfWork.Drugs.Search(k => k.DrugTitle == searchkey));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Please Write the Search Key correctly");
+            }
         }
     }
 }

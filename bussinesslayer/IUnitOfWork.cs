@@ -21,7 +21,8 @@ namespace bussinesslayer
              IGenericRepository<Vaccancies> Vaccancies { get; }
         
             IGenericRepository<VaccineTypes> VaccineTypes { get; }
-
+        
+             IGenericRepository<Customer> Customer { get; }
         int Complete();
     }
 }

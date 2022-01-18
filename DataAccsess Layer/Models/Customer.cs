@@ -20,12 +20,15 @@ namespace Motim_Data_Access_Layer.Models
         public string CustomerGender{ get; set; }
         public string CustomerAddress { get; set; }
         public string CustomerNote { get; set; }
-        public int ParentID { get; set; }
+        public int? ParentID { get; set; }
        
         public int DistructID { get; set; }
         [ForeignKey("DistructID")]
         public Distructs Distructs { get; set; }
         public DateTime CreationDate { get; set; }
+
+        [ForeignKey("ParentID")]
+        public Customer parent { get; set; }
 
 
     }

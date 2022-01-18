@@ -3,6 +3,7 @@ using DataAccsess_Layer.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
+using System;
 
 namespace WeCare.Controller
 {
@@ -11,9 +12,10 @@ namespace WeCare.Controller
     public class VaccanciesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        
+
         public VaccanciesController(IUnitOfWork unitOfWork)
         {
+
             _unitOfWork = unitOfWork;
         }
         /// <summary>
@@ -24,9 +26,19 @@ namespace WeCare.Controller
         /// <response code="400">Vaccancies has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Vaccancies right now</response>
         [HttpGet("id")]
-        public IActionResult GetById(int id)
+        public IActionResult GetVaccanciesById(int id)
         {
-            return Ok(_unitOfWork.Vaccancies.GetById(id));
+            try
+            {
+                var Vaccancies = _unitOfWork.Vaccancies.GetById(id);
+                if(Vaccancies == null)
+                    throw new Exception("No Vaccancies is founnd with  id: " + id);
+                return Ok(Vaccancies);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Retrieves All Vaccancies
@@ -37,9 +49,20 @@ namespace WeCare.Controller
         /// <response code="500">Oops! Can't create your Vaccancies right now</response>
 
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult GetAllVaccancies()
         {
-            return Ok(_unitOfWork.Vaccancies.GetAll());
+            try
+            {
+                var Vaccancies = _unitOfWork.Vaccancies.GetAll();
+                if(Vaccancies == null)
+                    return NoContent();
+                return Ok(Vaccancies);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
         /// <summary>
         /// Delete specific DrugsGroups by ID
@@ -49,10 +72,17 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpDelete]
-        public IActionResult delete(int id)
+        public IActionResult deleteVaccancies(int id)
         {
-            _unitOfWork.Vaccancies.Delete(id);
-            return Ok();
+            try
+            {
+                _unitOfWork.Vaccancies.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Deleted Action Not complete no Vaccancie with this id:" + id);
+            }
         }
         /// <summary>
         /// Add New Vaccancies
@@ -62,16 +92,23 @@ namespace WeCare.Controller
         /// <response code="400">Vaccancies has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Vaccancies right now</response>
         [HttpPost]
-        public IActionResult Add(VaccanciesCreateViewModel Vaccancies)
+        public IActionResult AddVaccancies(VaccanciesCreateViewModel Vaccancies)
         {
-            Vaccancies model = new Vaccancies()
+            try
             {
-                VaccineTittle = Vaccancies.VaccineTittle,
-                VaccineMonths = Vaccancies.VaccineMonths,
-                CreationDate = Vaccancies.CreationDate
-            };
-            _unitOfWork.Vaccancies.Add(model);
-            return Ok();
+                Vaccancies model = new Vaccancies()
+                {
+                    VaccineTittle = Vaccancies.VaccineTittle,
+                    VaccineMonths = Vaccancies.VaccineMonths,
+                    CreationDate = Vaccancies.CreationDate
+                };
+                _unitOfWork.Vaccancies.Add(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check that you  add the Vaccancie correctly");
+            }
         }
         /// <summary>
         /// Update Existing Vaccancies
@@ -81,10 +118,17 @@ namespace WeCare.Controller
         /// <response code="400">Vaccancies has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Vaccancies right now</response>
         [HttpPut]
-        public IActionResult Update( Vaccancies Vaccancies)
+        public IActionResult UpdateVaccancie(Vaccancies Vaccancies)
         {
-            _unitOfWork.Vaccancies.Update( Vaccancies);
-            return Ok();
+            try
+            {
+                _unitOfWork.Vaccancies.Update(Vaccancies);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check the you update the  correct Vaccancies");
+            }
         }
         /// <summary>
         /// Search for Specific cit by using SearchKey
@@ -96,7 +140,15 @@ namespace WeCare.Controller
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
-            return Ok(_unitOfWork.Vaccancies.Search(k => k.VaccineTittle == searchkey));
-        }
+            try
+            {
+                return Ok(_unitOfWork.Vaccancies.Search(k => k.VaccineTittle == searchkey));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Please Write the Search Key correctly");
+            }
+        } 
     }
 }

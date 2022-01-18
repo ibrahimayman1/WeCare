@@ -24,6 +24,8 @@ namespace bussinesslayer
                  public IGenericRepository<Vaccancies> Vaccancies { get; private set; }
       
             public IGenericRepository<VaccineTypes> VaccineTypes { get; private set; }
+        
+                        public IGenericRepository<Customer> Customer { get; private set; }
         public UnitOfWork(WeCareContext context)
         {
             _context = context;
@@ -35,6 +37,7 @@ namespace bussinesslayer
             Interests= new GenericRepository<Interests>(_context);
             Vaccancies= new GenericRepository<Vaccancies>(_context);
             VaccineTypes = new GenericRepository<VaccineTypes>(_context);
+            Customer = new GenericRepository<Customer>(_context);
 
         }
         public int Complete()

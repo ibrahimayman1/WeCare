@@ -9,11 +9,11 @@ namespace WeCare.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DistructsController : ControllerBase
+    public class CustomerController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public DistructsController(IUnitOfWork unitOfWork)
+        public CustomerController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -25,13 +25,15 @@ namespace WeCare.Controller
         /// <response code="400">Distructs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Distructs right now</response>
         [HttpGet("id")]
-        public IActionResult GetDistructById(int id)
+        public IActionResult GetCustomerById(int id)
         {
-            try {
-                var distruct = _unitOfWork.Distructs.GetById(id);
-                if (distruct == null)
-                    throw new Exception("No Distructs is founnd with  id: " + id);
-                return Ok(distruct);
+            try
+            {
+                var Customer = _unitOfWork.Customer.GetById(id);
+                if(Customer == null)
+                    throw new Exception("No Customer is founnd with  id: " + id);
+
+                return Ok(Customer);
             }
 
             catch (Exception ex)
@@ -47,39 +49,44 @@ namespace WeCare.Controller
         /// <response code="400">Distructs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Distructs right now</response>
         [HttpGet("GetAll")]
-        public IActionResult GetAllDistructs()
+        public IActionResult GetAllCustomers()
         {
             try
             {
-                var Distructs = _unitOfWork.Distructs.GetAll();
-                return Ok(Distructs);
+                var customerLst = _unitOfWork.Customer.GetAll();
+            if(customerLst == null)
+                    return NoContent();
+                return Ok(customerLst);
             }
             catch (Exception ex)
             {
-                return BadRequest("no Distructs Have been Added !");
+                return BadRequest(ex.Message);
             }
 
         }
-        /// <summary>
-        /// Delete specific Distructs by ID
-        /// </summary>
-        /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
-        [HttpDelete]
-        public IActionResult DeleteDistruct(int id)
+          
+    /// <summary>
+    /// Delete specific Distructs by ID
+    /// </summary>
+    /// <remarks>Awesomeness!</remarks>
+    /// <response code="200">Distructs created</response>
+    /// <response code="400">Distructs has missing/invalid values</response>
+    /// <response code="500">Oops! Can't create your Distructs right now</response>
+    [HttpDelete]
+        public IActionResult DeleteCustomer(int id)
         {
             try
             {
-                _unitOfWork.Distructs.Delete(id);
-                return Ok();
+                _unitOfWork.Customer.Delete(id);
             }
+
+
             catch (Exception ex)
             {
-                return BadRequest("no Distructs with  id:" + id);
+                return BadRequest("no customer with  id:"+id);
             }
-        }
+            return Ok();
+        } 
         /// <summary>
         /// Add New Distructs
         /// </summary>
@@ -88,27 +95,33 @@ namespace WeCare.Controller
         /// <response code="400">Distructs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Distructs right now</response>
         [HttpPost]
-        public IActionResult AddDistruct([FromQuery] DistructsCreateViewModel Distructs)
+        public IActionResult AddCustomer([FromQuery] CustomerCreateViewModel Customer)
         {
             try
             {
-                Distructs model = new Distructs()
+                Customer model = new Customer()
                 {
-                    DistrictTitle = Distructs.DistrictTitle,
-                    CityID = Distructs.CityID,
-                    CreationDate = Distructs.CreationDate
+                    CustomerName = Customer.CustomerName,
+                    CustomerNumber = Customer.CustomerNumber,
+                    CustomerNumber2 = Customer.CustomerNumber2,
+                    CustomerEmail = Customer.CustomerEmail,
+                    ParentID = Customer.ParentID,
+                    DistructID = Customer.DistructID,
+                    CustomerNote = Customer.CustomerNote,
+                    CustomerBirthDay = Customer.CustomerBirthDay,
+                    CustomerAddress = Customer.CustomerAddress,
 
+
+                    CustomerGender = Customer.CustomerGender
                 };
-                _unitOfWork.Distructs.Add(model);
-                return Ok();
+                _unitOfWork.Customer.Add(model);
+                return Ok(Customer);
             }
             catch (Exception ex)
             {
-                return BadRequest("Please check that you  add the Distructs correctly");
+                return BadRequest("Please check that you  add the customer correctly");
             }
-
         }
-
         /// <summary>
         /// Update Existing Distructs
         /// </summary>
@@ -117,16 +130,16 @@ namespace WeCare.Controller
         /// <response code="400">Distructs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Distructs right now</response>
         [HttpPut]
-        public IActionResult UpdateDistruct(  Distructs Distructs)
+        public IActionResult UpdateCustomer(Customer Customer)
         {
             try
             {
-                _unitOfWork.Distructs.Update(Distructs);
-                return Ok();
+                _unitOfWork.Customer.Update(Customer);
+                return Ok(Customer);
             }
             catch (Exception ex)
             {
-                return BadRequest("Please check the you update the  correct Distructs");
+                return BadRequest("Please check the you update the  correct customer");
             }
         }
         /// <summary>

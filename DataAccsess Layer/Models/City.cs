@@ -12,6 +12,7 @@ namespace Motim_Data_Access_Layer.Models
        [Key]
         public int CityID { get; set; }
 
+        
         public string CityTittle { get; set; }
         public DateTime CreationDate { get; set; }
         

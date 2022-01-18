@@ -3,6 +3,7 @@ using DataAccsess_Layer.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
+using System;
 
 namespace WeCare.Controller
 {
@@ -17,9 +18,21 @@ namespace WeCare.Controller
             _unitOfWork = unitOfWork;
         }
         [HttpGet("id")]
-        public IActionResult GetById(int id)
+        public IActionResult GetVaccineTypesById(int id)
         {
-            return Ok(_unitOfWork.VaccineTypes.GetById(id));
+            try
+            {
+                var VaccineTypes = _unitOfWork.VaccineTypes.GetById(id);
+                if(VaccineTypes == null)
+                    throw new Exception("No VaccineTypes is founnd with  id: " + id);
+
+                return Ok(VaccineTypes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
         /// <summary>
         /// Retrieves All VaccineTypes
@@ -30,9 +43,19 @@ namespace WeCare.Controller
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
 
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult VaccineTypesGetAll()
         {
-            return Ok(_unitOfWork.VaccineTypes.GetAll());
+            try
+            {
+                var vaccineTypes = _unitOfWork.VaccineTypes.GetAll();
+                if(vaccineTypes==null)
+                    return NoContent();
+                return Ok(vaccineTypes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Delete specific DrugsGroups by ID
@@ -42,10 +65,17 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpDelete]
-        public IActionResult delete(int id)
+        public IActionResult DeleteVaccineTypes(int id)
         {
-            _unitOfWork.VaccineTypes.Delete(id);
-            return Ok();
+            try
+            {
+                _unitOfWork.VaccineTypes.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Deleted Action Not complete no VaccineType with this id:" + id);
+            }
         }
         /// <summary>
         /// Add New VaccineTypes
@@ -55,16 +85,23 @@ namespace WeCare.Controller
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
         [HttpPost]
-        public IActionResult Add(VaccineTypesCreateViewModel VaccineTypes)
+        public IActionResult AddVaccineTypes(VaccineTypesCreateViewModel VaccineTypes)
         {
-            VaccineTypes model = new VaccineTypes()
+            try
             {
-                VaccineTypeTittle = VaccineTypes.VaccineTypeTittle,
-                
-                CreationDate = VaccineTypes.CreationDate
-            };
-            _unitOfWork.VaccineTypes.Add(model);
-            return Ok();
+                VaccineTypes model = new VaccineTypes()
+                {
+                    VaccineTypeTittle = VaccineTypes.VaccineTypeTittle,
+
+                    CreationDate = VaccineTypes.CreationDate
+                };
+                _unitOfWork.VaccineTypes.Add(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check that you  add the VaccineType correctly");
+            }
         }
         /// <summary>
         /// Update Existing VaccineTypes
@@ -74,13 +111,20 @@ namespace WeCare.Controller
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
         [HttpPut]
-        public IActionResult Update( VaccineTypes VaccineTypes)
+        public IActionResult UpdateVaccineTypes( VaccineTypes VaccineTypes)
         {
-            _unitOfWork.VaccineTypes.Update(VaccineTypes);
-            return Ok();
+            try
+            {
+                _unitOfWork.VaccineTypes.Update(VaccineTypes);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check the you update the  correct VaccineTypes");
+            }
         }
         /// <summary>
-        /// Search for Specific cit by using SearchKey
+        /// Search for Specific VaccineTypes by using SearchKey
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">VaccineTypes created</response>
@@ -89,7 +133,14 @@ namespace WeCare.Controller
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
-            return Ok(_unitOfWork.VaccineTypes.Search(k => k.VaccineTypeTittle == searchkey));
+            try {
+                return Ok(_unitOfWork.VaccineTypes.Search(k => k.VaccineTypeTittle == searchkey));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Please Write the Search Key correctly");
+            }
         }
     }
 }

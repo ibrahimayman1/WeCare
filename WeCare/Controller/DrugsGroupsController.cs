@@ -25,18 +25,19 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpGet("id")]
-        public IActionResult GetById(int id)
+        public IActionResult GetDrugsGroupsById(int id)
         {
             try
             {
-
-                return Ok(_unitOfWork.DrugsGroups.GetById(id));
+                var DrugsGroups = _unitOfWork.DrugsGroups.GetById(id);
+                if (DrugsGroups == null)
+                    throw new Exception("No DrugsGroups is founnd with  id: " + id);
+                return Ok(DrugsGroups);
             }
 
             catch (Exception ex)
             {
-
-                return BadRequest(ex.InnerException);
+                return BadRequest(ex.Message);
             }
         }
         /// <summary>
@@ -47,9 +48,19 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult GetAllDrugsGroups()
         {
-            return Ok(_unitOfWork.DrugsGroups.GetAll());
+            try
+            {
+                var DrugsGroup = _unitOfWork.DrugsGroups.GetAll();
+                if (DrugsGroup == null)
+                    return NoContent();
+                return Ok(DrugsGroup);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Delete specific DrugsGroups by ID
@@ -59,10 +70,17 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteDrugsGroup(int id)
         {
-            _unitOfWork.DrugsGroups.Delete(id);
-            return Ok();
+            try
+            {
+                _unitOfWork.DrugsGroups.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Deleted Action Not complete no DrugsGroups with  id:" + id);
+            }
         }
         /// <summary>
         /// Add New DrugsGroups
@@ -72,15 +90,23 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpPost]
-        public IActionResult Add([FromQuery] DrugsGroupsCreateViewModel DrugsGroups)
+        public IActionResult AddDrugsGroup([FromQuery] DrugsGroupsCreateViewModel DrugsGroups)
         {
-            DrugsGroups model = new DrugsGroups()
+            try
             {
-                GroupTittle = DrugsGroups.GroupTittle,
-                CreationTime = DrugsGroups.CreationTime
-            };
-            _unitOfWork.DrugsGroups.Add(model);
-            return Ok();
+                DrugsGroups model = new DrugsGroups()
+                {
+                    GroupTittle = DrugsGroups.GroupTittle,
+                    CreationTime = DrugsGroups.CreationTime
+                };
+                _unitOfWork.DrugsGroups.Add(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check that you  add the DrugsGroups correctly");
+            }
+
         }
         /// <summary>
         /// Update Existing DrugsGroups
@@ -90,10 +116,17 @@ namespace WeCare.Controller
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpPut]
-        public IActionResult Update(  DrugsGroups DrugsGroups)
+        public IActionResult UpdateDrugsGroup(  DrugsGroups DrugsGroups)
         {
-            _unitOfWork.DrugsGroups.Update( DrugsGroups);
-            return Ok();
+            try
+            {
+                _unitOfWork.DrugsGroups.Update(DrugsGroups);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please check the you update the  correct DrugsGroups");
+            }
         }
         /// <summary>
         /// Search for Specific cit by using SearchKey
@@ -105,7 +138,15 @@ namespace WeCare.Controller
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
-            return Ok(_unitOfWork.DrugsGroups.Search(k => k.GroupTittle == searchkey));
+            try
+            {
+                return Ok(_unitOfWork.DrugsGroups.Search(k => k.GroupTittle == searchkey));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Please Write the Search Key correctly");
+            }
         }
     }
 }

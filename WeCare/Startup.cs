@@ -45,8 +45,16 @@ namespace WeCare
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+              
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WeCare v1"));
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseStatusCodePagesWithReExecute("The link may be broken, or the page may have been removed");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
             app.UseHttpsRedirection();

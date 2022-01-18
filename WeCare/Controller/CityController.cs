@@ -12,29 +12,50 @@ namespace WeCare.CityController
     public class CityController : ControllerBase
 
     {
-        private readonly IUnitOfWork _unitOfWork;
 
+        #region Declare Variables
+        private readonly IUnitOfWork _unitOfWork;
+        #endregion
+
+        #region Constructor
         public CityController(IUnitOfWork unitOfWork)
         {
 
             _unitOfWork = unitOfWork;
         }
+        #endregion
+
+        #region  CRUD OPEARIONS
+
+            #region GetCityById
         /// <summary>
         /// Retrieves a specific city by unique id
+        ///  parameter (ID)
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">City created</response>
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
-
         [HttpGet("id")]
-        public IActionResult GetById(int id)
+        public IActionResult GetCityById(int id)
         {
-            
+            try
+            {
+                var city = _unitOfWork.city.GetById(id);
+                if (city == null)
+                    throw new Exception("No city is founnd with  id: " + id);
                 return Ok(_unitOfWork.city.GetById(id));
-            
-          
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
+        #endregion
+
+            #region GetAllCity
         /// <summary>
         /// Retrieves All City
         /// </summary>
@@ -43,57 +64,118 @@ namespace WeCare.CityController
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public IActionResult GetAllCity()
         {
-            return Ok(_unitOfWork.city.GetAll());
+            try
+            {
+                var Citylst = _unitOfWork.city.GetAll();
+
+                if (Citylst == null)
+                    return NoContent();
+                return Ok(Citylst);
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest("NO CITY HAS BEEN ADDED in your Data Base");
+            }
         }
+        #endregion
+
+
+
+
+        #endregion
+
+
+
+
+
         /// <summary>
         /// Delete specific city by ID
+        /// parameter (int )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">City created</response>
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
+        /// 
+
+
+       
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteCity(int id)
         {
-            _unitOfWork.city.Delete(id);
-            return Ok();
+            try
+            {
+                _unitOfWork.city.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("no CITY with this id:" + id);
+            }
+           
+
         }
         /// <summary>
         /// Add New City
+        /// parameter (New Instance from city )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">City created</response>
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
         [HttpPost]
-        public IActionResult Add([FromQuery]CityCreateViewModel city)
+        public IActionResult AddCity([FromQuery] CityCreateViewModel city)
         {
-            City model = new City()
+
+            try
             {
-                CityTittle = city.CityTittle,
-                CreationDate = city.CreationDate
-            };
-            _unitOfWork.city.Add(model);
-            return Ok(model);
+
+
+                City model = new City()
+                {
+                    CityTittle = city.CityTittle,
+                    CreationDate = city.CreationDate
+                };
+               
+                _unitOfWork.city.Add(model);
+                return Ok(model);
+            }
+
+
+            catch (Exception ex)
+            {
+                return BadRequest("Please add the city correctly  ");
+            }
         }
         /// <summary>
         /// Update Existing City
+        ///   parameter (  Instance from city )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">City created</response>
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
         [HttpPut]
-        public IActionResult Update([FromQuery] City city)
-        {
 
-            _unitOfWork.city.Update(city);
-            return Ok();
+        public IActionResult UpdateCity([FromQuery] City city)
+        {
+            try
+            {
+                
+                _unitOfWork.city.Update(city);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Please ckeck if this city are exist  ");
+            }
         }
         /// <summary>
         /// Search for Specific city by using SearchKey
+        /// parameter (  string )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">City created</response>
@@ -103,7 +185,15 @@ namespace WeCare.CityController
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
-            return Ok(_unitOfWork.city.Search(k=>k.CityTittle== searchkey));
+            try
+            {
+                return Ok(_unitOfWork.city.Search(k => k.CityTittle == searchkey));
+            }
+            catch (Exception ex)
+            {
+               
+                return BadRequest("Please Write the Search Key correctly");
+            }
         }
 
 
