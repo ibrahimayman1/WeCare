@@ -99,16 +99,7 @@ namespace WeCare.CityController
             }
         }
         #endregion
-
-
-
-
-        #endregion
-
-
-
-
-
+        #region GetDeletecityById
         /// <summary>
         /// Delete specific city by ID
         /// parameter (int )
@@ -119,8 +110,6 @@ namespace WeCare.CityController
         /// <response code="500">Oops! Can't create your City right now</response>
         /// 
 
-
-       
         [HttpDelete]
         public IActionResult DeleteCity(int id)
         {
@@ -133,9 +122,19 @@ namespace WeCare.CityController
             {
                 return BadRequest("no CITY with this id:" + id);
             }
-           
+
 
         }
+        #endregion
+
+
+        #endregion
+
+
+
+
+
+
         /// <summary>
         /// Add New City
         /// parameter (New Instance from city )
