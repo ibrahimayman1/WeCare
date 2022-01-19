@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Motim_Data_Access_Layer.Models;
 
 namespace DataAccsess_Layer.Migrations
 {
     [DbContext(typeof(WeCareContext))]
-    partial class WeCareContextModelSnapshot : ModelSnapshot
+    [Migration("20220119150540_MaxLengthconstrain")]
+    partial class MaxLengthconstrain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,8 +235,6 @@ namespace DataAccsess_Layer.Migrations
 
                     b.HasKey("CityID");
 
-                    b.HasIndex("CityTittle");
-
                     b.ToTable("City");
                 });
 
@@ -258,6 +258,7 @@ namespace DataAccsess_Layer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerEmail")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -272,6 +273,7 @@ namespace DataAccsess_Layer.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CustomerNote")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -281,6 +283,7 @@ namespace DataAccsess_Layer.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CustomerNumber2")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -288,18 +291,12 @@ namespace DataAccsess_Layer.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ParentID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("kidsCustomerID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("CustomerID");
 
-                    b.HasIndex("CustomerName");
-
                     b.HasIndex("DistructID");
-
-                    b.HasIndex("kidsCustomerID");
 
                     b.ToTable("Customers");
                 });
@@ -327,8 +324,6 @@ namespace DataAccsess_Layer.Migrations
 
                     b.HasIndex("CityID");
 
-                    b.HasIndex("DistrictTitle");
-
                     b.ToTable("Distructs");
                 });
 
@@ -354,8 +349,6 @@ namespace DataAccsess_Layer.Migrations
 
                     b.HasIndex("DrugGroupID");
 
-                    b.HasIndex("DrugTitle");
-
                     b.ToTable("Drugs");
                 });
 
@@ -377,8 +370,6 @@ namespace DataAccsess_Layer.Migrations
 
                     b.HasKey("DrugsGroupID");
 
-                    b.HasIndex("GroupTittle");
-
                     b.ToTable("DrugsGroups");
                 });
 
@@ -399,8 +390,6 @@ namespace DataAccsess_Layer.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("InterestsID");
-
-                    b.HasIndex("InterestsTittle");
 
                     b.ToTable("Interests");
                 });
@@ -428,8 +417,6 @@ namespace DataAccsess_Layer.Migrations
 
                     b.HasKey("VaccineID");
 
-                    b.HasIndex("VaccineTittle");
-
                     b.HasIndex("VaccineTypeID");
 
                     b.ToTable("Vaccancies");
@@ -451,8 +438,6 @@ namespace DataAccsess_Layer.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("VaccineTypeID");
-
-                    b.HasIndex("VaccineTypeTittle");
 
                     b.ToTable("VaccineTypes");
                 });
@@ -516,13 +501,7 @@ namespace DataAccsess_Layer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Motim_Data_Access_Layer.Models.Customer", "kids")
-                        .WithMany()
-                        .HasForeignKey("kidsCustomerID");
-
                     b.Navigation("Distructs");
-
-                    b.Navigation("kids");
                 });
 
             modelBuilder.Entity("Motim_Data_Access_Layer.Models.Distructs", b =>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Motim_Data_Access_Layer.Models
 {
-    internal class LogError
+    public class LogError
     {
         public LogError()
         {

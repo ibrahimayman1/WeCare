@@ -15,8 +15,18 @@ namespace Motim_Data_Access_Layer.Models
         {
 
         }
+
+      
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Contact>()
+                        .HasOptional(c => c.Spouse)
+                        .WithMany()
+                        .HasForeignKey(c => c.SpouseId);
+        }
+
         public virtual DbSet<Distructs> Distructs { get; set; }
         public virtual DbSet<Drugs> Drugs { get; set; }
 

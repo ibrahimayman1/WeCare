@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Motim_Data_Access_Layer.Models
 {
+    [Index(nameof(VaccineTittle))]
     public class Vaccancies
     {
         public Vaccancies()
@@ -17,8 +19,10 @@ namespace Motim_Data_Access_Layer.Models
         [Key]
         public int VaccineID { get; set; }
         [Required]
+        [MaxLength(50)]
         public string VaccineTittle { get; set; }
         [Required]
+       
         public int VaccineMonths { get; set; }
         [Required]
         public int VaccineTypeID { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
 using System;
+using System.Linq;
 
 namespace WeCare.Controller
 {
@@ -14,7 +15,7 @@ namespace WeCare.Controller
     {
         #region Declare Variables
         private readonly IUnitOfWork _unitOfWork;
-
+        private readonly WeCareContext _Context;
 
         #endregion
 
@@ -45,11 +46,12 @@ namespace WeCare.Controller
             {
                 GeneralResponse<Customer> response = new GeneralResponse<Customer>();
                 Customer Customer = _unitOfWork.Customer.GetById(id);
-
+               
                 if (Customer != null)
                 {
                     response.Message = "Success";
                     response.StatusCode = HttpContext.Response.StatusCode;
+                   
                     response.Data.Add(Customer);
                     response.Success = true;
 
@@ -88,6 +90,7 @@ namespace WeCare.Controller
             {
                 GeneralResponse<Customer> response = new GeneralResponse<Customer>();
                 var Customerlst = _unitOfWork.Customer.GetAll();
+            
 
                 if (Customerlst != null)
                 {
