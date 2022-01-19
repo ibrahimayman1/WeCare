@@ -1,5 +1,6 @@
 ﻿using bussinesslayer;
 using DataAccsess_Layer.ViewModel;
+using DataAccsess_Layer.ViewModel.GeneralResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
@@ -13,19 +14,43 @@ namespace WeCare.Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public VaccineTypesController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        #region  CRUD OPEARIONS
+
+        #region GetVaccineTypesById
+        /// <summary>
+        /// Retrieves a specific VaccineTypes by unique id
+        ///  parameter (ID)
+        /// </summary>
+        /// <remarks>Awesomeness!</remarks>
+        /// <response code="200">VaccineTypes created</response>
+        /// <response code="400">VaccineTypes has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
         [HttpGet("id")]
-        public IActionResult GetVaccineTypesById(int id)
+        public ActionResult<GeneralResponse<VaccineTypes>> GetVaccineTypesById(int id)
         {
             try
             {
-                var VaccineTypes = _unitOfWork.VaccineTypes.GetById(id);
-                if (VaccineTypes == null) return  NotFound();
+                GeneralResponse<VaccineTypes> response = new GeneralResponse<VaccineTypes>();
+                VaccineTypes VaccineTypes = _unitOfWork.VaccineTypes.GetById(id);
 
-                return Ok(VaccineTypes);
+                if (VaccineTypes != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data.Add(VaccineTypes);
+                    response.Success = true;
+
+
+                    return response;
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
@@ -33,6 +58,9 @@ namespace WeCare.Controller
             }
 
         }
+        #endregion
+
+        #region GetAllVaccineTypes
         /// <summary>
         /// Retrieves All VaccineTypes
         /// </summary>
@@ -40,104 +68,223 @@ namespace WeCare.Controller
         /// <response code="200">VaccineTypes created</response>
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
-
         [HttpGet("GetAll")]
-        public IActionResult VaccineTypesGetAll()
+        public IActionResult GetAllVaccineTypes()
         {
             try
             {
-                var vaccineTypes = _unitOfWork.VaccineTypes.GetAll();
-                if(vaccineTypes==null)
-                    return NoContent();
-                return Ok(vaccineTypes);
+                GeneralResponse<VaccineTypes> response = new GeneralResponse<VaccineTypes>();
+                var VaccineTypeslst = _unitOfWork.VaccineTypes.GetAll();
+
+                if (VaccineTypeslst != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data = _unitOfWork.VaccineTypes.GetAll();
+                    response.Success = true;
+
+
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("NO VaccineTypes HAS BEEN ADDED in your Data Base");
             }
         }
+        #endregion
+
+
+
+        #region DeleteVaccineTypesById
         /// <summary>
-        /// Delete specific DrugsGroups by ID
+        /// Delete specific VaccineTypes by ID
+        /// parameter (int )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">DrugsGroups created</response>
-        /// <response code="400">DrugsGroups has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
+        /// <response code="200">VaccineTypes created</response>
+        /// <response code="400">VaccineTypes has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
+
+
         [HttpDelete]
         public IActionResult DeleteVaccineTypes(int id)
         {
             try
             {
-                _unitOfWork.VaccineTypes.Delete(id);
-                return Ok();
+                GeneralResponse<VaccineTypes> response = new GeneralResponse<VaccineTypes>();
+                VaccineTypes VaccineTypes = _unitOfWork.VaccineTypes.GetById(id);
+
+                if (VaccineTypes != null)
+                {
+                    _unitOfWork.VaccineTypes.Delete(id);
+                    return Ok("The VaccineTypes has Been Deleted");
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest("Deleted Action Not complete no VaccineType with this id:" + id);
+                return BadRequest("no VaccineTypes with this id:" + id);
             }
+
+
         }
+        #endregion
+
+
+
+
+        #region AddVaccineTypes
+
         /// <summary>
         /// Add New VaccineTypes
+        /// parameter (New Instance from VaccineTypes )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">VaccineTypes created</response>
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
         [HttpPost]
-        public IActionResult AddVaccineTypes([FromQuery]VaccineTypesCreateViewModel VaccineTypes)
+        public IActionResult AddVaccineTypes([FromQuery] VaccineTypesCreateViewModel VaccineTypes)
         {
+
             try
             {
-                if(VaccineTypes == null)
-                    return NotFound();
-                VaccineTypes model = new VaccineTypes()
+                GeneralResponse<VaccineTypes> response = new GeneralResponse<VaccineTypes>();
+                if (VaccineTypes != null)
                 {
+                    VaccineTypes model = new VaccineTypes()
+                    {
 
-                    VaccineTypeTittle = VaccineTypes.VaccineTypeTittle,
+                        VaccineTypeTittle = VaccineTypes.VaccineTypeTittle,
 
-                    CreationDate = VaccineTypes.CreationDate
-                };
-             
-                var statuscode=HttpContext.Response.StatusCode;
-                return StatusCode(201,"object Created");
+                        CreationDate = VaccineTypes.CreationDate
+                    };
+                    _unitOfWork.VaccineTypes.Add(model);
+                    response.Message = "The VaccineTypes Has Been Add";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(model);
+                    response.Success = true;
+
+                    return Ok(response);
+
+                }
+                else
+                {
+                    response.Message = "Failed To Add VaccineTypes";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
+
+
             catch (Exception ex)
             {
-                return BadRequest("Please check that you  add the VaccineType correctly");
+                return BadRequest("Please add the VaccineTypes correctly  ");
             }
         }
+        #endregion
+
+
+        #region UpdateVaccineTypes
         /// <summary>
         /// Update Existing VaccineTypes
+        ///   parameter (  Instance from VaccineTypes )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">VaccineTypes created</response>
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
         [HttpPut]
-        public IActionResult UpdateVaccineTypes( VaccineTypes VaccineTypes)
+
+        public IActionResult UpdateVaccineTypes([FromQuery] VaccineTypes VaccineTypes)
         {
             try
             {
-                _unitOfWork.VaccineTypes.Update(VaccineTypes);
-                return Ok();
+                GeneralResponse<VaccineTypes> response = new GeneralResponse<VaccineTypes>();
+                if (VaccineTypes != null)
+                {
+
+
+                    _unitOfWork.VaccineTypes.Update(VaccineTypes);
+                    response.Message = "The VaccineTypes Has Been Updated";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(VaccineTypes);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Update VaccineTypes";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest("Please check the you update the  correct VaccineTypes");
+                return BadRequest("Please ckeck if this VaccineTypes are exist  ");
             }
         }
+        #endregion
+
+
+
+
+        #region  Search
+
+        #region  SearchbyVaccineTypes
         /// <summary>
         /// Search for Specific VaccineTypes by using SearchKey
+        /// parameter (  string )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">VaccineTypes created</response>
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
+
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
-            try {
-                return Ok(_unitOfWork.VaccineTypes.Search(k => k.VaccineTypeTittle == searchkey));
+            try
+            {
+                GeneralResponse<VaccineTypes> response = new GeneralResponse<VaccineTypes>();
+
+                VaccineTypes VaccineTypes = _unitOfWork.VaccineTypes.Search(k => k.VaccineTypeTittle == searchkey);
+                if (VaccineTypes != null)
+                {
+                    response.Message = "Succes";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(VaccineTypes);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Not Found";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
@@ -145,5 +292,10 @@ namespace WeCare.Controller
                 return BadRequest("Please Write the Search Key correctly");
             }
         }
+
+
     }
 }
+#endregion
+#endregion
+#endregion

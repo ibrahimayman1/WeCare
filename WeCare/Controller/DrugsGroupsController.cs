@@ -1,5 +1,6 @@
 ﻿using bussinesslayer;
 using DataAccsess_Layer.ViewModel;
+using DataAccsess_Layer.ViewModel.GeneralResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
@@ -17,29 +18,53 @@ namespace WeCare.Controller
         {
             _unitOfWork = unitOfWork;
         }
+    #region  CRUD OPEARIONS
+
+            #region GetDrugsGroupsById
         /// <summary>
         /// Retrieves a specific DrugsGroups by unique id
+        ///  parameter (ID)
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">DrugsGroups created</response>
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpGet("id")]
-        public IActionResult GetDrugsGroupsById(int id)
+        public ActionResult< GeneralResponse<DrugsGroups>>  GetDrugsGroupsById(int id)
         {
             try
             {
-                var DrugsGroups = _unitOfWork.DrugsGroups.GetById(id);
-                if (DrugsGroups == null)
-                    throw new Exception("No DrugsGroups is founnd with  id: " + id);
-                return Ok(DrugsGroups);
-            }
+                GeneralResponse<DrugsGroups> response = new GeneralResponse<DrugsGroups>();
+                DrugsGroups DrugsGroups = _unitOfWork.DrugsGroups.GetById(id);
 
+                if (DrugsGroups != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data.Add(DrugsGroups);
+                    response.Success = true;
+
+
+                    return response;
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode=400;
+                  
+                    response.Success = false;
+                    return BadRequest(response);
+                }
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+
         }
+        #endregion
+
+            #region GetAllDrugsGroups
         /// <summary>
         /// Retrieves All DrugsGroups
         /// </summary>
@@ -52,95 +77,216 @@ namespace WeCare.Controller
         {
             try
             {
-                var DrugsGroup = _unitOfWork.DrugsGroups.GetAll();
-                if (DrugsGroup == null)
-                    return NoContent();
-                return Ok(DrugsGroup);
+                GeneralResponse<DrugsGroups> response = new GeneralResponse<DrugsGroups>();
+                var DrugsGroupslst = _unitOfWork.DrugsGroups.GetAll();
+
+                if (DrugsGroupslst != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data =_unitOfWork.DrugsGroups.GetAll() ;
+                    response.Success = true;
+
+
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("NO DrugsGroups HAS BEEN ADDED in your Data Base");
             }
         }
+        #endregion
+
+
+
+        #region DeleteDrugsGroupsById
         /// <summary>
         /// Delete specific DrugsGroups by ID
+        /// parameter (int )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">DrugsGroups created</response>
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
+       
+
         [HttpDelete]
-        public IActionResult DeleteDrugsGroup(int id)
+        public IActionResult DeleteDrugsGroups(int id)
         {
             try
             {
-                _unitOfWork.DrugsGroups.Delete(id);
-                return Ok();
+                GeneralResponse<DrugsGroups> response = new GeneralResponse<DrugsGroups>();
+                DrugsGroups DrugsGroups = _unitOfWork.DrugsGroups.GetById(id);
+              
+                if (DrugsGroups != null)
+                {
+                    _unitOfWork.DrugsGroups.Delete(id);
+                    return Ok("The DrugsGroups has Been Deleted");
+                }
+                else
+                {
+                    return NotFound();  
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest("Deleted Action Not complete no DrugsGroups with  id:" + id);
+                return BadRequest("no DrugsGroups with this id:" + id);
             }
+
+
         }
+        #endregion
+
+
+
+
+        #region AddDrugsGroups
+
         /// <summary>
         /// Add New DrugsGroups
+        /// parameter (New Instance from DrugsGroups )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">DrugsGroups created</response>
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpPost]
-        public IActionResult AddDrugsGroup([FromQuery] DrugsGroupsCreateViewModel DrugsGroups)
+        public IActionResult AddDrugsGroups([FromQuery] DrugsGroupsCreateViewModel DrugsGroups)
         {
+
             try
             {
-                DrugsGroups model = new DrugsGroups()
+                GeneralResponse<DrugsGroups> response = new GeneralResponse<DrugsGroups>();
+                if (DrugsGroups != null)
                 {
-                    GroupTittle = DrugsGroups.GroupTittle,
-                    CreationTime = DrugsGroups.CreationTime
-                };
-                _unitOfWork.DrugsGroups.Add(model);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Please check that you  add the DrugsGroups correctly");
+                    DrugsGroups model = new DrugsGroups()
+                    {
+                        GroupTittle = DrugsGroups.GroupTittle,
+                        CreationTime = DrugsGroups.CreationTime
+                    };
+                    _unitOfWork.DrugsGroups.Add(model);
+                    response.Message = "The DrugsGroups Has Been Add";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    
+                    response.Data.Add(model);
+                    response.Success = true;
+                    
+                    return Ok(response);
+
+                }
+                else
+                {
+                    response.Message = "Failed To Add DrugsGroups";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
 
+
+            catch (Exception ex)
+            {
+                return BadRequest("Please add the DrugsGroups correctly  ");
+            }
         }
+        #endregion
+
+
+        #region UpdateDrugsGroups
         /// <summary>
         /// Update Existing DrugsGroups
+        ///   parameter (  Instance from DrugsGroups )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">DrugsGroups created</response>
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
         [HttpPut]
-        public IActionResult UpdateDrugsGroup(  DrugsGroups DrugsGroups)
+
+        public IActionResult UpdateDrugsGroups([FromQuery] DrugsGroups DrugsGroups)
         {
             try
             {
-                _unitOfWork.DrugsGroups.Update(DrugsGroups);
-                return Ok();
+                GeneralResponse<DrugsGroups> response = new GeneralResponse<DrugsGroups>();
+                if (DrugsGroups != null)
+                {
+                    
+
+                    _unitOfWork.DrugsGroups.Update(DrugsGroups);
+                    response.Message = "The DrugsGroups Has Been Updated";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(DrugsGroups);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Update DrugsGroups";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest("Please check the you update the  correct DrugsGroups");
+                return BadRequest("Please ckeck if this DrugsGroups are exist  ");
             }
         }
+        #endregion
+
+
+
+
+        #region  Search
+
+        #region  SearchbyDrugsGroups
         /// <summary>
-        /// Search for Specific cit by using SearchKey
+        /// Search for Specific DrugsGroups by using SearchKey
+        /// parameter (  string )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">DrugsGroups created</response>
         /// <response code="400">DrugsGroups has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your DrugsGroups right now</response>
+
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
             try
             {
-                return Ok(_unitOfWork.DrugsGroups.Search(k => k.GroupTittle == searchkey));
+                GeneralResponse<DrugsGroups> response = new GeneralResponse<DrugsGroups>();
+
+                DrugsGroups DrugsGroups = _unitOfWork.DrugsGroups.Search(k => k.GroupTittle == searchkey);
+                if (DrugsGroups != null)
+                {
+                    response.Message = "Succes";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(DrugsGroups);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Not Found";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
@@ -148,5 +294,10 @@ namespace WeCare.Controller
                 return BadRequest("Please Write the Search Key correctly");
             }
         }
+
+
     }
 }
+#endregion
+#endregion
+#endregion

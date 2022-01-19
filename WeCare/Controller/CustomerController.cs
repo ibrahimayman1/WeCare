@@ -1,5 +1,6 @@
 ﻿using bussinesslayer;
 using DataAccsess_Layer.ViewModel;
+using DataAccsess_Layer.ViewModel.GeneralResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
@@ -26,192 +27,286 @@ namespace WeCare.Controller
         #endregion
 
 
-
         #region  CRUD OPEARIONS
+
         #region GetCustomerById
         /// <summary>
-        /// Retrieves a specific Distructs by unique id
+        /// Retrieves a specific Customer by unique id
+        ///  parameter (ID)
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
-
+        /// <response code="200">Customer created</response>
+        /// <response code="400">Customer has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Customer right now</response>
         [HttpGet("id")]
-        public IActionResult GetCustomerById(int id)
+        public ActionResult<GeneralResponse<Customer>> GetCustomerById(int id)
         {
             try
             {
-                var Customer = _unitOfWork.Customer.GetById(id);
-                if(Customer == null)
-                    throw new Exception("No Customer is founnd with  id: " + id);
+                GeneralResponse<Customer> response = new GeneralResponse<Customer>();
+                Customer Customer = _unitOfWork.Customer.GetById(id);
 
-                return Ok(Customer);
+                if (Customer != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data.Add(Customer);
+                    response.Success = true;
+
+
+                    return response;
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
-
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+
         }
-
-
         #endregion
-
-
 
         #region GetAllCustomer
         /// <summary>
-        /// Retrieves All Distructs
+        /// Retrieves All Customer
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
+        /// <response code="200">Customer created</response>
+        /// <response code="400">Customer has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Customer right now</response>
         [HttpGet("GetAll")]
-        public IActionResult GetAllCustomers()
+        public IActionResult GetAllCustomer()
         {
             try
             {
-                var customerLst = _unitOfWork.Customer.GetAll();
-            if(customerLst == null)
-                    return NoContent();
-                return Ok(customerLst);
+                GeneralResponse<Customer> response = new GeneralResponse<Customer>();
+                var Customerlst = _unitOfWork.Customer.GetAll();
+
+                if (Customerlst != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data = _unitOfWork.Customer.GetAll();
+                    response.Success = true;
+
+
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("NO Customer HAS BEEN ADDED in your Data Base");
             }
-
         }
-
-
         #endregion
 
 
 
-        #region DeletecityById 
+        #region DeleteCustomerById
         /// <summary>
-        /// Delete specific Distructs by ID
+        /// Delete specific Customer by ID
+        /// parameter (int )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
+        /// <response code="200">Customer created</response>
+        /// <response code="400">Customer has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Customer right now</response>
+
+
         [HttpDelete]
         public IActionResult DeleteCustomer(int id)
         {
             try
             {
-                _unitOfWork.Customer.Delete(id);
+                GeneralResponse<Customer> response = new GeneralResponse<Customer>();
+                Customer Customer = _unitOfWork.Customer.GetById(id);
+
+                if (Customer != null)
+                {
+                    _unitOfWork.Customer.Delete(id);
+                    return Ok("The Customer has Been Deleted");
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-
-
             catch (Exception ex)
             {
-                return BadRequest("no customer with  id:"+id);
+                return BadRequest("no Customer with this id:" + id);
             }
-            return Ok();
-        }
 
+
+        }
         #endregion
 
 
 
-        #region AddCity
+
+        #region AddCustomer
+
         /// <summary>
-        /// Add New Distructs
+        /// Add New Customer
+        /// parameter (New Instance from Customer )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
+        /// <response code="200">Customer created</response>
+        /// <response code="400">Customer has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Customer right now</response>
         [HttpPost]
         public IActionResult AddCustomer([FromQuery] CustomerCreateViewModel Customer)
         {
+
             try
             {
-                Customer model = new Customer()
+                GeneralResponse<Customer> response = new GeneralResponse<Customer>();
+                if (Customer != null)
                 {
-                    CustomerName = Customer.CustomerName,
-                    CustomerNumber = Customer.CustomerNumber,
-                    CustomerNumber2 = Customer.CustomerNumber2,
-                    CustomerEmail = Customer.CustomerEmail,
-                    ParentID = Customer.ParentID,
-                    DistructID = Customer.DistructID,
-                    CustomerNote = Customer.CustomerNote,
-                    CustomerBirthDay = Customer.CustomerBirthDay,
-                    CustomerAddress = Customer.CustomerAddress,
+                    Customer model = new Customer()
+                    {
+                        CustomerName = Customer.CustomerName,
 
+                        CustomerEmail = Customer.CustomerEmail,
+                        CustomerNumber = Customer.CustomerNumber,
+                        CustomerNumber2 = Customer.CustomerNumber2,
+                        CustomerGender = Customer.CustomerGender,
+                        CustomerBirthDay = Customer.CustomerBirthDay,
+                        CustomerNote = Customer.CustomerNote,
+                        DistructID = Customer.DistructID,
+                        CustomerAddress = Customer.CustomerAddress,
+                        ParentID = Customer.ParentID
+                      
 
-                    CustomerGender = Customer.CustomerGender
-                };
-                _unitOfWork.Customer.Add(model);
-                return Ok(Customer);
+                    };
+                    _unitOfWork.Customer.Add(model);
+                    response.Message = "The Customer Has Been Add";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(model);
+                    response.Success = true;
+
+                    return Ok(response);
+
+                }
+                else
+                {
+                    response.Message = "Failed To Add Customer";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
+
+
             catch (Exception ex)
             {
-                return BadRequest("Please check that you  add the customer correctly");
+                return BadRequest("Please add the Customer correctly  ");
             }
         }
+        #endregion
 
 
-
-
-        #endregion 
-
-
-
-
-        #region Update Existing Customer
-
+        #region UpdateCustomer
         /// <summary>
         /// Update Existing Customer
+        ///   parameter (  Instance from Customer )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
-        [HttpPut] 
-        public IActionResult UpdateCustomer(Customer Customer)
+        /// <response code="200">Customer created</response>
+        /// <response code="400">Customer has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Customer right now</response>
+        [HttpPut]
+
+        public IActionResult UpdateCustomer([FromQuery] Customer Customer)
         {
             try
             {
-                _unitOfWork.Customer.Update(Customer);
-                return Ok(Customer);
+                GeneralResponse<Customer> response = new GeneralResponse<Customer>();
+                if (Customer != null)
+                {
+
+
+                    _unitOfWork.Customer.Update(Customer);
+                    response.Message = "The Customer Has Been Updated";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(Customer);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Update Customer";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest("Please check the you update the  correct customer");
+                return BadRequest("Please ckeck if this Customer are exist  ");
             }
         }
-
         #endregion
-        #endregion
-
-
-
 
 
 
 
         #region  Search
 
-        #region  Searchbycity
-
+        #region  SearchbyCustomer
         /// <summary>
-        /// Search for Specific cit by using SearchKey
+        /// Search for Specific Customer by using SearchKey
+        /// parameter (  string )
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
-        /// <response code="200">Distructs created</response>
-        /// <response code="400">Distructs has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your Distructs right now</response>
+        /// <response code="200">Customer created</response>
+        /// <response code="400">Customer has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Customer right now</response>
+
         [HttpGet("Search")]
         public IActionResult Search(string searchkey)
         {
             try
             {
-                return Ok(_unitOfWork.Distructs.Search(k => k.DistrictTitle == searchkey));
+                GeneralResponse<Customer> response = new GeneralResponse<Customer>();
+
+                Customer Customer = _unitOfWork.Customer.Search(k => k.CustomerName == searchkey);
+                if (Customer != null)
+                {
+                    response.Message = "Succes";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(Customer);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Not Found";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
@@ -220,7 +315,18 @@ namespace WeCare.Controller
             }
         }
 
+
     }
 }
 #endregion
 #endregion
+#endregion
+
+    
+
+
+
+
+
+
+

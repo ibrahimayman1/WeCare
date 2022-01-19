@@ -238,7 +238,7 @@ namespace WeCare.CityController
 
                     response.Data.Add(city);
                     response.Success = true;
-                    return Ok(city);
+                    return Ok(response);
                 }
                 else
                 {
@@ -254,10 +254,10 @@ namespace WeCare.CityController
                 return BadRequest("Please ckeck if this city are exist  ");
             }
         }
-
         #endregion
 
-        #endregion
+
+
 
         #region  Search
 
@@ -276,11 +276,30 @@ namespace WeCare.CityController
         {
             try
             {
-                return Ok(_unitOfWork.city.Search(k => k.CityTittle == searchkey));
+                GeneralResponse<City> response = new GeneralResponse<City>();
+
+                City city = _unitOfWork.city.Search(k => k.CityTittle == searchkey);
+                if (city != null)
+                {
+                    response.Message = "Succes";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(city);
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Not Found";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
-               
+
                 return BadRequest("Please Write the Search Key correctly");
             }
         }
@@ -290,3 +309,7 @@ namespace WeCare.CityController
 }
 #endregion
 #endregion
+#endregion
+
+
+
