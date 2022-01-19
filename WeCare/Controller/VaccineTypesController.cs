@@ -23,8 +23,7 @@ namespace WeCare.Controller
             try
             {
                 var VaccineTypes = _unitOfWork.VaccineTypes.GetById(id);
-                if(VaccineTypes == null)
-                    throw new Exception("No VaccineTypes is founnd with  id: " + id);
+                if (VaccineTypes == null) return  NotFound();
 
                 return Ok(VaccineTypes);
             }
@@ -85,18 +84,22 @@ namespace WeCare.Controller
         /// <response code="400">VaccineTypes has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your VaccineTypes right now</response>
         [HttpPost]
-        public IActionResult AddVaccineTypes(VaccineTypesCreateViewModel VaccineTypes)
+        public IActionResult AddVaccineTypes([FromQuery]VaccineTypesCreateViewModel VaccineTypes)
         {
             try
             {
+                if(VaccineTypes == null)
+                    return NotFound();
                 VaccineTypes model = new VaccineTypes()
                 {
+
                     VaccineTypeTittle = VaccineTypes.VaccineTypeTittle,
 
                     CreationDate = VaccineTypes.CreationDate
                 };
-                _unitOfWork.VaccineTypes.Add(model);
-                return Ok();
+             
+                var statuscode=HttpContext.Response.StatusCode;
+                return StatusCode(201,"object Created");
             }
             catch (Exception ex)
             {

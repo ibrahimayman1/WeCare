@@ -129,7 +129,7 @@ namespace WeCare.Controller
         /// <response code="200">Distructs created</response>
         /// <response code="400">Distructs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Distructs right now</response>
-        [HttpPut]
+        [HttpPut] 
         public IActionResult UpdateCustomer(Customer Customer)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using bussinesslayer;
 using DataAccsess_Layer.Models;
+using DataAccsess_Layer.ViewModel.GeneralResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Motim_Data_Access_Layer.Models;
@@ -41,11 +42,28 @@ namespace WeCare.CityController
         {
             try
             {
-                var city = _unitOfWork.city.GetById(id);
-                if (city == null)
-                    throw new Exception("No city is founnd with  id: " + id);
-                return Ok(_unitOfWork.city.GetById(id));
+                GeneralResponse<City> response = new GeneralResponse<City>();
 
+                var city = _unitOfWork.city.GetById(id);
+
+                if (city != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data= _unitOfWork.city.GetById(id);
+                    response.Success = true;
+
+
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                  
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {

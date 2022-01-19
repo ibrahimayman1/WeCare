@@ -15,6 +15,10 @@ namespace Motim_Data_Access_Layer.Models
         
         public string CityTittle { get; set; }
         public DateTime CreationDate { get; set; }
-        
+
+        public static implicit operator List<object>(City v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
