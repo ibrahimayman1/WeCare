@@ -38,28 +38,27 @@ namespace WeCare.CityController
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
         [HttpGet("id")]
-        public IActionResult GetCityById(int id)
+        public ActionResult< GeneralResponse<City>>  GetCityById(int id)
         {
             try
             {
                 GeneralResponse<City> response = new GeneralResponse<City>();
-
-                var city = _unitOfWork.city.GetById(id);
+                City city = _unitOfWork.city.GetById(id);
 
                 if (city != null)
                 {
                     response.Message = "Success";
                     response.StatusCode = HttpContext.Response.StatusCode;
-                    response.Data= _unitOfWork.city.GetById(id);
+                    response.Data.Add(city);
                     response.Success = true;
 
 
-                    return Ok(response);
+                    return response;
                 }
                 else
                 {
                     response.Message = "Failed To Retrive Data";
-                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.StatusCode = HttpContext.Response.StatusCode=400;
                   
                     response.Success = false;
                     return BadRequest(response);
@@ -86,11 +85,27 @@ namespace WeCare.CityController
         {
             try
             {
+                GeneralResponse<City> response = new GeneralResponse<City>();
                 var Citylst = _unitOfWork.city.GetAll();
 
-                if (Citylst == null)
-                    return NoContent();
-                return Ok(Citylst);
+                if (Citylst != null)
+                {
+                    response.Message = "Success";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    response.Data =_unitOfWork.city.GetAll() ;
+                    response.Success = true;
+
+
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Failed To Retrive Data";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
 
             catch (Exception ex)
@@ -99,7 +114,10 @@ namespace WeCare.CityController
             }
         }
         #endregion
-        #region GetDeletecityById
+
+
+
+        #region DeletecityById
         /// <summary>
         /// Delete specific city by ID
         /// parameter (int )
@@ -108,15 +126,25 @@ namespace WeCare.CityController
         /// <response code="200">City created</response>
         /// <response code="400">City has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your City right now</response>
-        /// 
+       
 
         [HttpDelete]
         public IActionResult DeleteCity(int id)
         {
             try
             {
-                _unitOfWork.city.Delete(id);
-                return Ok();
+                GeneralResponse<City> response = new GeneralResponse<City>();
+                City city = _unitOfWork.city.GetById(id);
+              
+                if (city != null)
+                {
+                    _unitOfWork.city.Delete(id);
+                    return Ok("The city has Been Deleted");
+                }
+                else
+                {
+                    return NotFound();  
+                }
             }
             catch (Exception ex)
             {
@@ -128,12 +156,9 @@ namespace WeCare.CityController
         #endregion
 
 
-        #endregion
 
 
-
-
-
+        #region AddCity
 
         /// <summary>
         /// Add New City
@@ -149,16 +174,33 @@ namespace WeCare.CityController
 
             try
             {
-
-
-                City model = new City()
+                GeneralResponse<City> response = new GeneralResponse<City>();
+                if (city != null)
                 {
-                    CityTittle = city.CityTittle,
-                    CreationDate = city.CreationDate
-                };
-               
-                _unitOfWork.city.Add(model);
-                return Ok(model);
+                    City model = new City()
+                    {
+                        CityTittle = city.CityTittle,
+                      
+                        CreationDate = city.CreationDate
+                    };
+                    _unitOfWork.city.Add(model);
+                    response.Message = "The city Has Been Add";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+                    
+                    response.Data.Add(model);
+                    response.Success = true;
+                    
+                    return Ok(response);
+
+                }
+                else
+                {
+                    response.Message = "Failed To Add City";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
 
 
@@ -167,6 +209,10 @@ namespace WeCare.CityController
                 return BadRequest("Please add the city correctly  ");
             }
         }
+        #endregion
+
+
+        #region UpdateCity
         /// <summary>
         /// Update Existing City
         ///   parameter (  Instance from city )
@@ -181,15 +227,41 @@ namespace WeCare.CityController
         {
             try
             {
-                
-                _unitOfWork.city.Update(city);
-                return Ok();
+                GeneralResponse<City> response = new GeneralResponse<City>();
+                if (city != null)
+                {
+                    
+
+                    _unitOfWork.city.Update(city);
+                    response.Message = "The city Has Been Updated";
+                    response.StatusCode = HttpContext.Response.StatusCode;
+
+                    response.Data.Add(city);
+                    response.Success = true;
+                    return Ok(city);
+                }
+                else
+                {
+                    response.Message = "Failed To Update City";
+                    response.StatusCode = HttpContext.Response.StatusCode = 400;
+
+                    response.Success = false;
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
                 return BadRequest("Please ckeck if this city are exist  ");
             }
         }
+
+        #endregion
+
+        #endregion
+
+        #region  Search
+
+        #region  Searchbycity
         /// <summary>
         /// Search for Specific city by using SearchKey
         /// parameter (  string )
@@ -216,3 +288,5 @@ namespace WeCare.CityController
 
     }
 }
+#endregion
+#endregion

@@ -11,7 +11,7 @@ namespace bussinesslayer.Interface
     public interface IGenericRepository<T> where T : class
     {
         T GetById(int id);
-        IEnumerable<T> GetAll();
+        List<T> GetAll();
         T Add(T entity);
        
         public void Delete(int Id);

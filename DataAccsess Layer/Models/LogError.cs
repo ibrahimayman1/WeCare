@@ -15,9 +15,13 @@ namespace Motim_Data_Access_Layer.Models
         }
         [Key]
         public int id { get; set; }
+        [Required]
         public string errormessage { get; set; }
+        [Required]
         public string ErrorStacks { get; set; }
+        [Required]
         public string UserName { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
 
     }

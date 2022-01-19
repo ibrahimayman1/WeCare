@@ -9,10 +9,15 @@ namespace Motim_Data_Access_Layer.Models
 {
     public class DrugsGroups
     {
+        public DrugsGroups()
+        {
+            CreationTime = DateTime.Now;
+        }
         [Key]
         public int DrugsGroupID { get; set; }
         [Required]
         public string  GroupTittle { get; set; }
+        [Required]
         public DateTime CreationTime { get; set; }
     }
 }

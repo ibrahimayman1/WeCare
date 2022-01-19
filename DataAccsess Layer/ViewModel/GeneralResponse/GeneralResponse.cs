@@ -8,9 +8,12 @@ namespace DataAccsess_Layer.ViewModel.GeneralResponse
 {
     public class GeneralResponse<T>
     {
+        public GeneralResponse() { Data = new List<T>(); }
+
         public string Message { get; set; }
         public int StatusCode { get; set; }
-        public T Data { get; set; }
+        public List<T> Data { get; set; }
         public Boolean Success { get; set; }
+
     }
 }

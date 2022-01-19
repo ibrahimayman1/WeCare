@@ -9,9 +9,15 @@ namespace Motim_Data_Access_Layer.Models
 {
     public class Interests
     {
+        public Interests()
+        {
+            CreationDate = DateTime.Now;
+        }
         [Key]
         public int InterestsID { get; set; }
+        [Required]
         public string InterestsTittle { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
 
     }

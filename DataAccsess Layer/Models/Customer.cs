@@ -10,25 +10,38 @@ namespace Motim_Data_Access_Layer.Models
 {
     public class Customer
     {
+        public Customer()
+        {
+            CreationDate = DateTime.Now;
+        }
         [Key]
         public int CustomerID { get; set; }
+        [Required]
         public string CustomerName { get; set; }
+        [Required]
         public string CustomerNumber { get; set; }
+        [Required]
         public string CustomerNumber2 { get; set; }
+        [Required]
         public string CustomerEmail { get; set; }
+        [Required]
         public DateTime CustomerBirthDay { get; set; }
+        [Required]
         public string CustomerGender{ get; set; }
+        [Required]
         public string CustomerAddress { get; set; }
+        [Required]
         public string CustomerNote { get; set; }
+        [Required]
         public int? ParentID { get; set; }
-       
+        [Required]
         public int DistructID { get; set; }
         [ForeignKey("DistructID")]
         public Distructs Distructs { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
 
-        [ForeignKey("ParentID")]
-        public Customer parent { get; set; }
+       
 
 
     }

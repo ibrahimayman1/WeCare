@@ -11,12 +11,24 @@ namespace WeCare.Controller
     [ApiController]
     public class CustomerController : ControllerBase
     {
+        #region Declare Variables
         private readonly IUnitOfWork _unitOfWork;
 
+
+        #endregion
+
+
+        #region Constructor
         public CustomerController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
+        #endregion
+
+
+
+        #region  CRUD OPEARIONS
+        #region GetCustomerById
         /// <summary>
         /// Retrieves a specific Distructs by unique id
         /// </summary>
@@ -24,6 +36,7 @@ namespace WeCare.Controller
         /// <response code="200">Distructs created</response>
         /// <response code="400">Distructs has missing/invalid values</response>
         /// <response code="500">Oops! Can't create your Distructs right now</response>
+
         [HttpGet("id")]
         public IActionResult GetCustomerById(int id)
         {
@@ -41,6 +54,13 @@ namespace WeCare.Controller
                 return BadRequest(ex.Message);
             }
         }
+
+
+        #endregion
+
+
+
+        #region GetAllCustomer
         /// <summary>
         /// Retrieves All Distructs
         /// </summary>
@@ -64,15 +84,21 @@ namespace WeCare.Controller
             }
 
         }
-          
-    /// <summary>
-    /// Delete specific Distructs by ID
-    /// </summary>
-    /// <remarks>Awesomeness!</remarks>
-    /// <response code="200">Distructs created</response>
-    /// <response code="400">Distructs has missing/invalid values</response>
-    /// <response code="500">Oops! Can't create your Distructs right now</response>
-    [HttpDelete]
+
+
+        #endregion
+
+
+
+        #region DeletecityById 
+        /// <summary>
+        /// Delete specific Distructs by ID
+        /// </summary>
+        /// <remarks>Awesomeness!</remarks>
+        /// <response code="200">Distructs created</response>
+        /// <response code="400">Distructs has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your Distructs right now</response>
+        [HttpDelete]
         public IActionResult DeleteCustomer(int id)
         {
             try
@@ -86,7 +112,13 @@ namespace WeCare.Controller
                 return BadRequest("no customer with  id:"+id);
             }
             return Ok();
-        } 
+        }
+
+        #endregion
+
+
+
+        #region AddCity
         /// <summary>
         /// Add New Distructs
         /// </summary>
@@ -122,8 +154,19 @@ namespace WeCare.Controller
                 return BadRequest("Please check that you  add the customer correctly");
             }
         }
+
+
+
+
+        #endregion 
+
+
+
+
+        #region Update Existing Customer
+
         /// <summary>
-        /// Update Existing Distructs
+        /// Update Existing Customer
         /// </summary>
         /// <remarks>Awesomeness!</remarks>
         /// <response code="200">Distructs created</response>
@@ -142,6 +185,20 @@ namespace WeCare.Controller
                 return BadRequest("Please check the you update the  correct customer");
             }
         }
+
+        #endregion
+        #endregion
+
+
+
+
+
+
+
+        #region  Search
+
+        #region  Searchbycity
+
         /// <summary>
         /// Search for Specific cit by using SearchKey
         /// </summary>
@@ -165,3 +222,5 @@ namespace WeCare.Controller
 
     }
 }
+#endregion
+#endregion

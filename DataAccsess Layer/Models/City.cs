@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace Motim_Data_Access_Layer.Models
 {
+
     public class City
     {
+        public City()
+        {
+            CreationDate=DateTime.Now;
+        }
        [Key]
         public int CityID { get; set; }
 
-        
+        [Required]
         public string CityTittle { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
 
-        public static implicit operator List<object>(City v)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

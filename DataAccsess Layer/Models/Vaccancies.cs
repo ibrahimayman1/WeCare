@@ -10,15 +10,21 @@ namespace Motim_Data_Access_Layer.Models
 {
     public class Vaccancies
     {
+        public Vaccancies()
+        {
+            CreationDate = DateTime.Now;
+        }
         [Key]
         public int VaccineID { get; set; }
         [Required]
         public string VaccineTittle { get; set; }
-
+        [Required]
         public int VaccineMonths { get; set; }
+        [Required]
         public int VaccineTypeID { get; set; }
         [ForeignKey("VaccineTypeID")]
         public VaccineTypes VaccineTypes { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
     }
 }
